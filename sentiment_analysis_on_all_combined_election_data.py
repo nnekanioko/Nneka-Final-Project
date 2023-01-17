@@ -58,21 +58,7 @@ gh = textcombined.to_frame()
 
 gh
 
-def clean_text(text):
-    '''Make text lowercase, remove text in square brackets,remove links,remove punctuation
-    and remove words containing numbers.'''
-    text = str(text).lower()
-    text = re.sub('rt', '', text)
-    text = re.sub('\[.*?\]', '', text)
-    text = re.sub('https?://\S+|www\.\S+', '', text)
-    text = re.sub('<.*?>+', '', text)
-    text = re.sub('[%s]' % re.escape(string.punctuation), '', text)
-    text = re.sub('\n', '', text)
-    text = re.sub('\w*\d\w*', '', text)
-    text = re.sub(r"@([a-zA-Z0-9_]{1,50})",'',str(text))
-
-    
-    return text
+#Data Preprocessing
 
 def clean_textC(text):
     '''Make text lowercase, remove text in square brackets,remove links,remove punctuation
@@ -96,6 +82,8 @@ def clean_textC(text):
     text = re.sub(r"@([a-zA-Z0-9_]{1,50})",'',str(text))
 
     return text
+
+#Text Preprocessing
 
 def Text_Processing(Text):
   Processed_Text = list()
@@ -130,6 +118,7 @@ def Text_Processing(Text):
 
   return Text
 
+
 #applying function to data
 gh["text"]= gh["text"].apply(lambda text: clean_textC(text))
 
@@ -139,7 +128,7 @@ gh["text"].head(15)
 
 gh["text"]= gh["text"].apply(lambda Text: Text_Processing(Text))
 
-gh
+
 
 gh["text"]
 
@@ -162,7 +151,7 @@ gh['polarity'] = gh['polarity'].apply(sentiment_col)
 
 gh['polarity']
 
-"""Plot PieChart for Sentiments Analysis Using Vader Lexicon"""
+"""Plot PieChart of Sentiments """
 
 polCom=gh['polarity'].groupby(gh['polarity']).size().reset_index(name='count')
 
@@ -379,6 +368,10 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import KFold
 import numpy as np
+from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+
 
 # load your twitter dataset
 vectorizer = TfidfVectorizer()
@@ -386,34 +379,6 @@ X = vectorizer.fit_transform(gh["text"])
 
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X,gh['polarity'], test_size=0.2)
-
-# fit the model on the training data
-nb.fit(X_train, y_train)
-    
-# make predictions on the test data
-y_pred = nb.predict(X_test)
-
-# calculate performance metrics
-accuracy = accuracy_score(y_test, y_pred)
-precision = precision_score(y_test, y_pred)
-recall = recall_score(y_test, y_pred)
-f1 = f1_score(y_test, y_pred)
-    
-# append the metrics to the lists
-accuracies.append(accuracy)
-precisions.append(precision)
-recalls.append(recall)
-f1s.append(f1)
-
-# print the average performance metrics
-print("Accuracy:", np.mean(accuracies))
-print("Precision:", np.mean(precisions))
-print("Recall:", np.mean(recalls))
-print("F1 Score:", np.mean(f1s))
-
-from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.model_selection import train_test_split
 
 # Train a naive Bayes classifier
 clf = MultinomialNB()
@@ -645,7 +610,7 @@ def create_wordcloud(text):
 #Creating wordcloud for all tweets
 create_wordcloud(gh["text"].values)
 
-"""#**EXPLORATORY ANALYSIS FOR ALL TWEETS**"""
+"""#**EXPLORATORY ANALYSIS FOR COMBINED TWEETS**"""
 
 import pandas as pd
 import matplotlib.pyplot as plt
